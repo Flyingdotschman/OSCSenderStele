@@ -21,7 +21,7 @@ public class OSCMsgHandler extends Handler {
 
     private OSCPortOut oscPortOut;
 
-    private String myIP = "192.168.1.149";
+    private String myIP = "192.168.178.98";
     private int myPort = 9001;
     private boolean success = false;
     @Override
@@ -47,43 +47,10 @@ public class OSCMsgHandler extends Handler {
             case SEND_PI:
                 if(success){
                     if (oscPortOut != null) {
-                        // Creating the message
-                        Object[] thingsToSend = new Object[3];
-                        thingsToSend[0] = "Hello World";
-                        thingsToSend[1] = 12345;
-                        thingsToSend[2] = 1.2345;
 
-                        /* The version of JavaOSC from the Maven Repository is slightly different from the one
-                         * from the download link on the main website at the time of writing this tutorial.
-                         *
-                         * The Maven Repository version (used here), takes a Collection, which is why we need
-                         * Arrays.asList(thingsToSend).
-                         *
-                         * If you're using the downloadable version for some reason, you should switch the
-                         * commented and uncommented lines for message below
-                         */
                         OSCMessage message = new OSCMessage("/pipresents/pipresents/core/hallo", Collections.singletonList(0));
-                        // OSCMessage message = new OSCMessage(myIP, thingsToSend);
 
 
-                        /* NOTE: Since this version of JavaOSC uses Collections, we can actually use ArrayLists,
-                         * or any other class that implements the Collection interface. The following code is
-                         * valid for this version.
-                         *
-                         * The benefit of using an ArrayList is that you don't have to know how much information
-                         * you are sending ahead of time. You can add things to the end of an ArrayList, but not
-                         * to an Array.
-                         *
-                         * If you want to use this code with the downloadable version, you should switch the
-                         * commented and uncommented lines for message2
-                         */
-                        ArrayList<Object> moreThingsToSend = new ArrayList<Object>();
-                        moreThingsToSend.add("Hello World2");
-                        moreThingsToSend.add(123456);
-                        moreThingsToSend.add(12.345);
-
-                        OSCMessage message2 = new OSCMessage("/pipresents/pipresents/core/hallo", moreThingsToSend);
-                        //OSCMessage message2 = new OSCMessage(myIP, moreThingsToSend.toArray());
 
                         try {
                             // Send the messages
