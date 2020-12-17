@@ -2,22 +2,24 @@ package de.fgmeier.oscsenderstele;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
-import com.illposed.osc.transport.udp.OSCPortOut;
+import com.illposed.osc.OSCPortIn;
+import com.illposed.osc.OSCPortOut;
 
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -34,12 +36,18 @@ public class OSCMsgHandler extends Handler {
     public static final int RESET_INSIDE = 7;
     Context context;
     private OSCPortOut oscPortOut;
+    private OSCPortIn oscPortIn;
 
     private String myIP = "192.168.4.1";
     private int myPort = 9001;
     private boolean success = false;
 
+    private Handler updateUi;
+
+
     public OSCMsgHandler(Context context){
+
+        this.updateUi = new Handler(Looper.getMainLooper());
         this.context = context;
         try {
             WifiConfiguration wificonfig = new WifiConfiguration();
@@ -81,13 +89,39 @@ public class OSCMsgHandler extends Handler {
 
             return;
         }
+        if(success){
+            try {
+                Log.d(TAG, "OSCMsgHandler: Trying Listener");
+                oscPortIn = new OSCPortIn(myPort);
+          OSCListener listener = new OSCListener() {
+              @Override
+              public void acceptMessage(Date time, OSCMessage message) {
+                  //Log.d("MESSAGE", "Received: ");
+                  List<Object> list =  message.getArguments();
+                  String i1, i2;
+                  i1 = list.get(0).toString();
+                  i2 = list.get(1).toString();
+                  Log.d("MESSAGE", "Received: " + i1 + " + " +i2);
+
+              }
+          };
+                        Log.d("MESSAGE", "Received: ");
+                oscPortIn.addListener("/max_plus", listener);
+                oscPortIn.startListening();
+            }catch(SocketException e) {
+                Log.d("SOCKET", String.valueOf(e));
+
+            }catch (Exception e){
+                Log.d("LISTENER", String.valueOf(e));
+            }
+        }
     }
 
     @Override
     public void handleMessage(@NonNull Message msg) {
         switch (msg.what) {
             case CONNECT_PI:
-
+/*
                 try {
                     WifiConfiguration wificonfig = new WifiConfiguration();
                     String networkSSID = "OSCStele";
@@ -127,6 +161,28 @@ public class OSCMsgHandler extends Handler {
                     Log.d("IP", String.valueOf(e));
 
                     return;
+                }*/
+                if (success) {
+                    if (oscPortOut != null) {
+                        if(oscPortIn.isListening()){
+                            Log.d("Listener", "is listening");
+                        }
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/system/server-info", Collections.singletonList(0));
+
+
+                        try {
+                            // Send the messages
+                            oscPortOut.send(message);
+                            //oscPortOut.send(message2);
+                            Log.d(TAG, "handleMessage: info");
+                           // currentThread().sleep(500);
+                        } catch (Exception e) {
+                            // Error handling for some error
+                            Log.d("SEND", String.valueOf(e));
+                            return;
+                        }
+                    }
+
                 }
                 break;
             case MAX_PLUS:
@@ -264,4 +320,6 @@ public class OSCMsgHandler extends Handler {
                 break;
         }
     }
+
+
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+
 public class MainActivity extends Activity {
     int t = 0;
     /* These two variables hold the IP address and port number.
@@ -34,7 +35,7 @@ public class MainActivity extends Activity {
         handlerThreat.start();
 
 
-        firstButton = findViewById(R.id.button2);
+        firstButton = findViewById(R.id.button_connect);
         firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

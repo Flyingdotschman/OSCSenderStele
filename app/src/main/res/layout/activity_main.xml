@@ -15,7 +15,7 @@
         app:layout_constraintGuide_percent="0.24760602" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button_connect"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text="Connect"
@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toStartOf="@+id/button_ip"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/button_connect" />
 
     <Button
         android:id="@+id/button_ip"
@@ -46,7 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_mp"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/button_connect" />
 
     <Button
         android:id="@+id/button_mm"
