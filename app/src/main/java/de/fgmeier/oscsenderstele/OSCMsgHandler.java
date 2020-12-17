@@ -1,6 +1,8 @@
 package de.fgmeier.oscsenderstele;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -9,6 +11,7 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -43,9 +46,12 @@ public class OSCMsgHandler extends Handler {
     private boolean success = false;
 
     private Handler updateUi;
-    private  MainActivity activity;
+    private MainActivity activity;
 
-    public OSCMsgHandler(Context context, MainActivity activity){
+    private String receivingString = "/counter_info";
+
+
+    public OSCMsgHandler(Context context, MainActivity activity) {
 
         this.updateUi = new Handler(Looper.getMainLooper());
         this.context = context;
@@ -57,23 +63,32 @@ public class OSCMsgHandler extends Handler {
             wificonfig.SSID = String.format("\"%s\"", networkSSID);
             wificonfig.preSharedKey = String.format("\"%s\"", networkPASS);
             WifiManager wifiManager = (WifiManager) this.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
+            if(!wifiManager.isWifiEnabled()){
+                wifiManager.setWifiEnabled(true);
+            }
             int netID = wifiManager.addNetwork(wificonfig);
             wifiManager.disconnect();
-            if(netID == -1){
+            if (netID == -1) {
                 Log.d(TAG, "handleMessage: Network exist allready");
-                List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-                for(WifiConfiguration i : list){
-                    Log.d(TAG, String.format("Found :\"%s\"", i.SSID));
-                    if(i.SSID != null && i.SSID.equals("\""+ networkSSID + "\"")){
-                        netID = i.networkId;
-                        Log.d(TAG, "handleMessage: exsisting Wifi setting found");
-                        break;
-                    }
+                int requestCode = 0;
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(activity,new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+
+                }
+
+            }
+            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+            for (WifiConfiguration i : list) {
+                Log.d(TAG, String.format("Found :\"%s\"", i.SSID));
+                if (i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                    netID = i.networkId;
+                    Log.d(TAG, "handleMessage: exsisting Wifi setting found");
+                    break;
                 }
             }
             wifiManager.disconnect();
-            wifiManager.enableNetwork(netID,true);
+            wifiManager.enableNetwork(netID, true);
             wifiManager.reconnect();
             Log.d(TAG, "handleMessage: WIFI");
             // Connect to some IP address and port
@@ -109,36 +124,36 @@ public class OSCMsgHandler extends Handler {
                 return;
             }
         }
-        if(success){
+        if (success) {
             try {
                 Log.d(TAG, "OSCMsgHandler: Trying Listener");
                 oscPortIn = new OSCPortIn(myPort);
-          OSCListener listener = new OSCListener() {
-              @Override
-              public void acceptMessage(Date time, OSCMessage message) {
-                  //Log.d("MESSAGE", "Received: ");
-                  List<Object> list =  message.getArguments();
-                  String i1, i2;
-                  i1 = list.get(0).toString();
-                  i2 = list.get(1).toString();
-                  Log.d("MESSAGE", "Received: " + i1 + " + " +i2);
-                  activity.runOnUiThread(new Runnable() {
-                      @Override
-                      public void run() {
+                OSCListener listener = new OSCListener() {
+                    @Override
+                    public void acceptMessage(Date time, OSCMessage message) {
+                        //Log.d("MESSAGE", "Received: ");
+                        List<Object> list = message.getArguments();
+                        String i1, i2;
+                        i1 = list.get(0).toString();
+                        i2 = list.get(1).toString();
+                        Log.d("MESSAGE", "Received: " + i1 + " + " + i2);
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                        activity.changeText(i1+"  " + i2);
-                      }
-                  });
+                                activity.changeText(i1, i2);
+                            }
+                        });
 
-              }
-          };
-                        Log.d("MESSAGE", "Received: ");
-                oscPortIn.addListener("/counter_info", listener);
+                    }
+                };
+                Log.d("MESSAGE", "Received: ");
+                oscPortIn.addListener(receivingString, listener);
                 oscPortIn.startListening();
-            }catch(SocketException e) {
+            } catch (SocketException e) {
                 Log.d("SOCKET", String.valueOf(e));
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.d("LISTENER", String.valueOf(e));
             }
         }
@@ -148,19 +163,32 @@ public class OSCMsgHandler extends Handler {
     public void handleMessage(@NonNull Message msg) {
         switch (msg.what) {
             case CONNECT_PI:
-/*
+
                 try {
                     WifiConfiguration wificonfig = new WifiConfiguration();
+
                     String networkSSID = "OSCStele";
                     String networkPASS = "quellbrunnmedium";
                     wificonfig.SSID = String.format("\"%s\"", networkSSID);
                     wificonfig.preSharedKey = String.format("\"%s\"", networkPASS);
                     WifiManager wifiManager = (WifiManager) this.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
+                    if(!wifiManager.isWifiEnabled()){
+                        wifiManager.setWifiEnabled(true);
+                    }
                     int netID = wifiManager.addNetwork(wificonfig);
                     wifiManager.disconnect();
-                    if(netID == -1){
+                    if (netID == -1) {
                         Log.d(TAG, "handleMessage: Network exist allready");
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
                         for(WifiConfiguration i : list){
                             Log.d(TAG, String.format("Found :\"%s\"", i.SSID));
@@ -188,10 +216,10 @@ public class OSCMsgHandler extends Handler {
                     Log.d("IP", String.valueOf(e));
 
                     return;
-                }*/
+                }
                 if (success) {
                     if (oscPortOut != null) {
-                        if(oscPortIn.isListening()){
+                        if (oscPortIn.isListening()) {
                             Log.d("Listener", "is listening");
                         }
                         OSCMessage message = new OSCMessage("/pipresents/pipresents/system/server-info", Collections.singletonList(0));
@@ -202,7 +230,7 @@ public class OSCMsgHandler extends Handler {
                             oscPortOut.send(message);
                             //oscPortOut.send(message2);
                             Log.d(TAG, "handleMessage: info");
-                           // currentThread().sleep(500);
+                            // currentThread().sleep(500);
                         } catch (Exception e) {
                             // Error handling for some error
                             Log.d("SEND", String.valueOf(e));
@@ -234,7 +262,7 @@ public class OSCMsgHandler extends Handler {
                     }
 
                 }
-               break;
+                break;
             case MAX_MINUS:
                 if (success) {
                     if (oscPortOut != null) {
@@ -256,7 +284,7 @@ public class OSCMsgHandler extends Handler {
                         }
                     }
                 }
-               break;
+                break;
             case INSIDE_PLUS:
                 if (success) {
                     if (oscPortOut != null) {
@@ -300,7 +328,7 @@ public class OSCMsgHandler extends Handler {
                         }
                     }
                 }
-            break;
+                break;
             case RESET_MAX:
                 if (success) {
                     if (oscPortOut != null) {
@@ -347,6 +375,7 @@ public class OSCMsgHandler extends Handler {
                 break;
         }
     }
+
 
 
 }

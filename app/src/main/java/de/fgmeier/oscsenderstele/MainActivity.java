@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
@@ -19,6 +20,8 @@ public class MainActivity extends Activity {
     private Button ip_Button;
     private Button im_Button;
     private Button ri_Button;
+    private TextView maxText;
+    private TextView insideText;
     // This is used to send messages
 
     private OSCHandlerThreat handlerThreat = new OSCHandlerThreat(this, MainActivity.this);
@@ -90,10 +93,14 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(7);
             }
         });
+
+        maxText = findViewById(R.id.textView_max);
+        insideText = findViewById(R.id.textView_inside);
     }
 
-    public void changeText(String s){
-        mp_Button.setText(s);
+    public void changeText(String max, String inside){
+        maxText.setText(max);
+        insideText.setText(inside);
     }
 
     @Override
