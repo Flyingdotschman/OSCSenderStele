@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
     private Button ri_Button;
     // This is used to send messages
 
-    private OSCHandlerThreat handlerThreat = new OSCHandlerThreat(this);
+    private OSCHandlerThreat handlerThreat = new OSCHandlerThreat(this, MainActivity.this);
 
 
 
@@ -90,6 +90,10 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(7);
             }
         });
+    }
+
+    public void changeText(String s){
+        mp_Button.setText(s);
     }
 
     @Override

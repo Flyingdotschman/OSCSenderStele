@@ -43,12 +43,13 @@ public class OSCMsgHandler extends Handler {
     private boolean success = false;
 
     private Handler updateUi;
+    private  MainActivity activity;
 
-
-    public OSCMsgHandler(Context context){
+    public OSCMsgHandler(Context context, MainActivity activity){
 
         this.updateUi = new Handler(Looper.getMainLooper());
         this.context = context;
+        this.activity = activity;
         try {
             WifiConfiguration wificonfig = new WifiConfiguration();
             String networkSSID = "OSCStele";
@@ -79,6 +80,8 @@ public class OSCMsgHandler extends Handler {
             sleep(500);
             oscPortOut = new OSCPortOut(InetAddress.getByName(myIP), myPort);
             success = true;
+            sleep(500);
+
         } catch (UnknownHostException e) {
             // Error handling when your IP isn't found
             Log.d("IP", "IP not found");
@@ -88,6 +91,23 @@ public class OSCMsgHandler extends Handler {
             Log.d("IP", String.valueOf(e));
 
             return;
+        }
+        if (oscPortOut != null) {
+
+            OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter-info", Collections.singletonList(0));
+
+
+            try {
+                // Send the messages
+                oscPortOut.send(message);
+                //oscPortOut.send(message2);
+                Log.d(TAG, "handleMessage: info");
+                // currentThread().sleep(500);
+            } catch (Exception e) {
+                // Error handling for some error
+                Log.d("SEND", String.valueOf(e));
+                return;
+            }
         }
         if(success){
             try {
@@ -102,11 +122,18 @@ public class OSCMsgHandler extends Handler {
                   i1 = list.get(0).toString();
                   i2 = list.get(1).toString();
                   Log.d("MESSAGE", "Received: " + i1 + " + " +i2);
+                  activity.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run() {
+
+                        activity.changeText(i1+"  " + i2);
+                      }
+                  });
 
               }
           };
                         Log.d("MESSAGE", "Received: ");
-                oscPortIn.addListener("/max_plus", listener);
+                oscPortIn.addListener("/counter_info", listener);
                 oscPortIn.startListening();
             }catch(SocketException e) {
                 Log.d("SOCKET", String.valueOf(e));
