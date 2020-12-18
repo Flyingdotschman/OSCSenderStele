@@ -3,6 +3,8 @@ package de.fgmeier.oscsenderstele;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -87,12 +89,18 @@ public class OSCMsgHandler extends Handler {
                     break;
                 }
             }
-            wifiManager.disconnect();
+
             wifiManager.enableNetwork(netID, true);
             wifiManager.reconnect();
             Log.d(TAG, "handleMessage: WIFI");
             // Connect to some IP address and port
-            sleep(500);
+            ConnectivityManager connManager = (ConnectivityManager)  this.context.getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
+            NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            while(!wifiInfo.isConnected()) {
+                sleep(50);
+                Log.d(TAG, "OSCMsgHandler: Waiting for Connection");
+                wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            }
             oscPortOut = new OSCPortOut(InetAddress.getByName(myIP), myPort);
             success = true;
             sleep(500);
@@ -109,8 +117,8 @@ public class OSCMsgHandler extends Handler {
         }
         if (oscPortOut != null) {
 
-            OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter-info", Collections.singletonList(0));
-
+            OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter_info", Collections.singletonList(0));
+            Log.d(TAG, "OSCMsgHandler: Send Counter_info");
 
             try {
                 // Send the messages
@@ -131,7 +139,7 @@ public class OSCMsgHandler extends Handler {
                 OSCListener listener = new OSCListener() {
                     @Override
                     public void acceptMessage(Date time, OSCMessage message) {
-                        //Log.d("MESSAGE", "Received: ");
+                        Log.d("MESSAGE", "Received: Counter_info");
                         List<Object> list = message.getArguments();
                         String i1, i2;
                         i1 = list.get(0).toString();
@@ -176,7 +184,7 @@ public class OSCMsgHandler extends Handler {
                         wifiManager.setWifiEnabled(true);
                     }
                     int netID = wifiManager.addNetwork(wificonfig);
-                    wifiManager.disconnect();
+
                     if (netID == -1) {
                         Log.d(TAG, "handleMessage: Network exist allready");
                         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -204,7 +212,13 @@ public class OSCMsgHandler extends Handler {
                     wifiManager.reconnect();
                     Log.d(TAG, "handleMessage: WIFI");
                     // Connect to some IP address and port
-                    sleep(500);
+                    ConnectivityManager connManager = (ConnectivityManager)  this.context.getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
+                    NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                    while(!wifiInfo.isConnected()) {
+                        sleep(50);
+                        Log.d(TAG, "OSCMsgHandler: Waiting for Connection");
+                        wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                    }
                     oscPortOut = new OSCPortOut(InetAddress.getByName(myIP), myPort);
                     success = true;
                 } catch (UnknownHostException e) {
@@ -219,10 +233,15 @@ public class OSCMsgHandler extends Handler {
                 }
                 if (success) {
                     if (oscPortOut != null) {
+                        try {
+                            oscPortIn = new OSCPortIn(myPort);
+                        } catch (SocketException e) {
+                            e.printStackTrace();
+                        }
                         if (oscPortIn.isListening()) {
                             Log.d("Listener", "is listening");
                         }
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/system/server-info", Collections.singletonList(0));
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter_info", Collections.singletonList(0));
 
 
                         try {

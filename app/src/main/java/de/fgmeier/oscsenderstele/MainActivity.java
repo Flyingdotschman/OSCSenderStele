@@ -2,6 +2,7 @@ package de.fgmeier.oscsenderstele;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -99,6 +100,15 @@ public class MainActivity extends Activity {
     }
 
     public void changeText(String max, String inside){
+        int m = Integer.parseInt(max);
+        int i = Integer.parseInt(inside);
+        if(i>=m){
+            maxText.setBackgroundColor(Color.parseColor("#FF0000"));
+            insideText.setBackgroundColor(Color.parseColor("#FF0000"));
+        }else{
+            maxText.setBackgroundColor(Color.parseColor("#00EE00"));
+            insideText.setBackgroundColor(Color.parseColor("#00EE00"));
+        }
         maxText.setText(max);
         insideText.setText(inside);
     }
