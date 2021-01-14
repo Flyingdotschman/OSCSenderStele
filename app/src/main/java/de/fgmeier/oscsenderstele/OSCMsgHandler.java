@@ -39,6 +39,7 @@ public class OSCMsgHandler extends Handler {
     public static final int INSIDE_MINUS = 5;
     public static final int RESET_MAX = 6;
     public static final int RESET_INSIDE = 7;
+    public static final int GET_NUMBERS = 8;
     Context context;
     private OSCPortOut oscPortOut;
     private OSCPortIn oscPortIn;
@@ -145,17 +146,18 @@ public class OSCMsgHandler extends Handler {
                         i1 = list.get(0).toString();
                         i2 = list.get(1).toString();
                         Log.d("MESSAGE", "Received: " + i1 + " + " + i2);
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                        if(i1.length()<6) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
 
-                                activity.changeText(i1, i2);
-                            }
-                        });
-
+                                    activity.changeText(i1, i2);
+                                }
+                            });
+                        }
                     }
                 };
-                Log.d("MESSAGE", "Received: ");
+
                 oscPortIn.addListener(receivingString, listener);
                 oscPortIn.startListening();
             } catch (SocketException e) {
@@ -352,7 +354,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_max", Collections.singletonList(6));
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_max", Collections.singletonList(70));
                         Log.d(TAG, "handleMessage: reset_max");
 
                         try {
@@ -374,8 +376,30 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_inside", Collections.singletonList(6));
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_inside", Collections.singletonList(25));
                         Log.d(TAG, "handleMessage: reset_inside");
+
+                        try {
+                            // Send the messages
+                            oscPortOut.send(message);
+                            //oscPortOut.send(message2);
+
+                            // Pause for half a second
+
+                        } catch (Exception e) {
+                            // Error handling for some error
+                            Log.d("SEND", String.valueOf(e));
+                            return;
+                        }
+                    }
+                }
+                break;
+            case GET_NUMBERS:
+                if (success) {
+                    if (oscPortOut != null) {
+
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter_info", Collections.singletonList(0));
+                        Log.d(TAG, "handleMessage: get_counters");
 
                         try {
                             // Send the messages

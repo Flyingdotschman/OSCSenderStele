@@ -4,9 +4,16 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
+
+import static java.lang.Math.abs;
 
 
 public class MainActivity extends Activity {
@@ -23,21 +30,31 @@ public class MainActivity extends Activity {
     private Button ri_Button;
     private TextView maxText;
     private TextView insideText;
+    private TextView connectionStatus;
+    private ImageView stopngo;
+    private Switch plusminusswitch;
     // This is used to send messages
 
     private OSCHandlerThreat handlerThreat = new OSCHandlerThreat(this, MainActivity.this);
-
-
+    private Handler mHandler;
+    private int checkNumbers = 1000;
+    long tStart;
+    long tEnd;
+    long tDelta;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
 
-        handlerThreat.start();
+        connectionStatus = findViewById(R.id.ConnectedStatus);
 
+        tEnd = System.currentTimeMillis();
+        handlerThreat.start();
+        mHandler = new Handler();
+        startCheckNumber();
 
         firstButton = findViewById(R.id.button_connect);
         firstButton.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +65,7 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(1);
             }
         });
+        /*
         mp_Button = findViewById(R.id.button_mp);
         mp_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +81,7 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(3);
             }
         });
-
+*/
         ip_Button = findViewById(R.id.button_ip);
         ip_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +97,7 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(5);
             }
         });
+        /*
         rm_Button = findViewById(R.id.button_rm);
         rm_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,20 +113,37 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(7);
             }
         });
-
+*/
         maxText = findViewById(R.id.textView_max);
         insideText = findViewById(R.id.textView_inside);
+        stopngo = findViewById(R.id.stopngo);
+
+        plusminusswitch = findViewById(R.id.switch1);
+
+       plusminusswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           @Override
+           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               if(isChecked){
+                   im_Button.setClickable(true);
+                   ip_Button.setClickable(true);
+               }else{
+                   im_Button.setClickable(false);
+                   ip_Button.setClickable(false);
+               }
+           }
+       });
     }
 
     public void changeText(String max, String inside){
         int m = Integer.parseInt(max);
         int i = Integer.parseInt(inside);
+        tEnd = System.currentTimeMillis();
+
+
         if(i>=m){
-            maxText.setBackgroundColor(Color.parseColor("#FF0000"));
-            insideText.setBackgroundColor(Color.parseColor("#FF0000"));
+           stopngo.setImageResource(R.drawable.red_c);
         }else{
-            maxText.setBackgroundColor(Color.parseColor("#00EE00"));
-            insideText.setBackgroundColor(Color.parseColor("#00EE00"));
+            stopngo.setImageResource(R.drawable.green_c);
         }
         maxText.setText(max);
         insideText.setText(inside);
@@ -117,5 +153,35 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         handlerThreat.quit();
+        stopCheckNumbers();
     }
+
+    Runnable mCheckNumbers = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                handlerThreat.getHandler().sendEmptyMessage(8);
+                tDelta = abs(tEnd - tStart);
+                String tDeltaString = Long.toString(tDelta);
+                Log.d("TIME: ", "DeltaTime: " + tDeltaString);
+                if(tDelta<2*checkNumbers){
+                    connectionStatus.setText("CONNECTED");
+                }else{
+                    connectionStatus.setText("DISCONNECTED");
+                }
+                tStart = System.currentTimeMillis();
+            }catch (Exception e){
+                Log.d("CheckNumbers", "run: No Connection ");
+            }
+            mHandler.postDelayed(mCheckNumbers, checkNumbers);
+        }
+    };
+    void startCheckNumber(){
+        mCheckNumbers.run();
+    }
+
+    void stopCheckNumbers(){
+        mHandler.removeCallbacks(mCheckNumbers);
+    }
+
 }
