@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
     private TextView insideText;
     private TextView connectionStatus;
     private ImageView stopngo;
-    private Switch plusminusswitch;
+
     // This is used to send messages
 
     private OSCHandlerThreat handlerThreat = new OSCHandlerThreat(this, MainActivity.this);
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
         firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // msg = Message.obtain();
+                // msg = Message.obtain();
 
                 handlerThreat.getHandler().sendEmptyMessage(1);
             }
@@ -118,31 +118,18 @@ public class MainActivity extends Activity {
         insideText = findViewById(R.id.textView_inside);
         stopngo = findViewById(R.id.stopngo);
 
-        plusminusswitch = findViewById(R.id.switch1);
 
-       plusminusswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-           @Override
-           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               if(isChecked){
-                   im_Button.setClickable(true);
-                   ip_Button.setClickable(true);
-               }else{
-                   im_Button.setClickable(false);
-                   ip_Button.setClickable(false);
-               }
-           }
-       });
     }
 
-    public void changeText(String max, String inside){
+    public void changeText(String max, String inside) {
         int m = Integer.parseInt(max);
         int i = Integer.parseInt(inside);
         tEnd = System.currentTimeMillis();
 
 
-        if(i>=m){
-           stopngo.setImageResource(R.drawable.red_c);
-        }else{
+        if (i >= m) {
+            stopngo.setImageResource(R.drawable.red_c);
+        } else {
             stopngo.setImageResource(R.drawable.green_c);
         }
         maxText.setText(max);
@@ -160,27 +147,28 @@ public class MainActivity extends Activity {
         @Override
         public void run() {
             try {
-                handlerThreat.getHandler().sendEmptyMessage(8);
+                handlerThreat.getHandler().sendEmptyMessage(8); 
                 tDelta = abs(tEnd - tStart);
                 String tDeltaString = Long.toString(tDelta);
                 Log.d("TIME: ", "DeltaTime: " + tDeltaString);
-                if(tDelta<2*checkNumbers){
+                if (tDelta < 3 * checkNumbers) {
                     connectionStatus.setText("CONNECTED");
-                }else{
+                } else {
                     connectionStatus.setText("DISCONNECTED");
                 }
                 tStart = System.currentTimeMillis();
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.d("CheckNumbers", "run: No Connection ");
             }
             mHandler.postDelayed(mCheckNumbers, checkNumbers);
         }
     };
-    void startCheckNumber(){
+
+    void startCheckNumber() {
         mCheckNumbers.run();
     }
 
-    void stopCheckNumbers(){
+    void stopCheckNumbers() {
         mHandler.removeCallbacks(mCheckNumbers);
     }
 
