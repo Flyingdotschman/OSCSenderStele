@@ -151,7 +151,7 @@ public class OSCMsgHandler extends Handler {
                                 @Override
                                 public void run() {
 
-                                    activity.changeText(i1, i2);
+                                    activity.receivedMsg(i1, i2);
                                 }
                             });
                         }

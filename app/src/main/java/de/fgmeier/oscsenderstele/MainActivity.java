@@ -2,15 +2,12 @@ package de.fgmeier.oscsenderstele;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import static java.lang.Math.abs;
@@ -38,9 +35,14 @@ public class MainActivity extends Activity {
     private OSCHandlerThreat handlerThreat = new OSCHandlerThreat(this, MainActivity.this);
     private Handler mHandler;
     private int checkNumbers = 1000;
-    long tStart;
-    long tEnd;
-    long tDelta;
+    boolean isconnected = false;
+    private long tStart;
+    private long tEnd;
+    private long tDelta;
+
+    private String maximumPeople;
+    private String insidePeople;
+
 
 
     @Override
@@ -117,24 +119,13 @@ public class MainActivity extends Activity {
         maxText = findViewById(R.id.textView_max);
         insideText = findViewById(R.id.textView_inside);
         stopngo = findViewById(R.id.stopngo);
+        setUisTextViews();
 
 
     }
 
-    public void changeText(String max, String inside) {
-        int m = Integer.parseInt(max);
-        int i = Integer.parseInt(inside);
-        tEnd = System.currentTimeMillis();
 
 
-        if (i >= m) {
-            stopngo.setImageResource(R.drawable.red_c);
-        } else {
-            stopngo.setImageResource(R.drawable.green_c);
-        }
-        maxText.setText(max);
-        insideText.setText(inside);
-    }
 
     @Override
     protected void onDestroy() {
@@ -152,9 +143,12 @@ public class MainActivity extends Activity {
                 String tDeltaString = Long.toString(tDelta);
                 Log.d("TIME: ", "DeltaTime: " + tDeltaString);
                 if (tDelta < 3 * checkNumbers) {
-                    connectionStatus.setText("CONNECTED");
+                    isconnected = true;
+
                 } else {
-                    connectionStatus.setText("DISCONNECTED");
+                   isconnected = false;
+                   setUisTextViews();
+
                 }
                 tStart = System.currentTimeMillis();
             } catch (Exception e) {
@@ -170,6 +164,41 @@ public class MainActivity extends Activity {
 
     void stopCheckNumbers() {
         mHandler.removeCallbacks(mCheckNumbers);
+    }
+
+    void setUisTextViews(){
+        if(isconnected) {
+            int m = Integer.parseInt(maximumPeople);
+            int i = Integer.parseInt(insidePeople);
+            if (i >= m) {
+                stopngo.setImageResource(R.drawable.red_c);
+            } else {
+                stopngo.setImageResource(R.drawable.green_c);
+            }
+        }else{
+            stopngo.setImageResource(R.drawable.grey_c);
+            maximumPeople = "?";
+            insidePeople = "?";
+        }
+
+        maxText.setText(maximumPeople);
+        insideText.setText(insidePeople);
+
+        if (isconnected) {
+            connectionStatus.setText("CONNECTED");
+        } else {
+            connectionStatus.setText("DISCONNECTED");
+        }
+    }
+
+    public void receivedMsg(String max, String inside) {
+        tEnd = System.currentTimeMillis();
+        maximumPeople = max;
+        insidePeople = inside;
+        tEnd = System.currentTimeMillis();
+        setUisTextViews();
+
+
     }
 
 }
