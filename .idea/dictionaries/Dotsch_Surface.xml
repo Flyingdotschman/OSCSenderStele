@@ -2,6 +2,7 @@
   <dictionary name="Dotsch Surface">
     <words>
       <w>fgmpublic</w>
+      <w>isconnected</w>
     </words>
   </dictionary>
 </component>
