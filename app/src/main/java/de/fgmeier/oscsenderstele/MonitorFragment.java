@@ -1,6 +1,7 @@
 package de.fgmeier.oscsenderstele;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,13 @@ public class MonitorFragment extends Fragment {
     private Button ip_Button;
     private Button im_Button;
 
+    private MonitorFragmentListener listener;
+
+    public interface MonitorFragmentListener{
+            void sendPlusOne();
+            void sendMinusOne();
+    }
+
     public static MonitorFragment newInstance(String inside, String maxpeople){
         MonitorFragment fragment = new MonitorFragment();
         Bundle args = new Bundle();
@@ -45,10 +53,44 @@ public class MonitorFragment extends Fragment {
         insidepeople = v.findViewById(R.id.number_inside);
         insidepeople.setText(inside);
         ip_Button = v.findViewById(R.id.button_plus);
-        ip_Button = v.findViewById(R.id.button_minus);
+        ip_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.sendPlusOne();
+
+            }
+        });
+
+        im_Button = v.findViewById(R.id.button_minus);
+        im_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               listener.sendMinusOne();
+            }
+        });
 
 
 
         return  v;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof MonitorFragmentListener) {
+            listener = (MonitorFragmentListener) context;
+        }else{
+            throw new RuntimeException(context.toString() + "Must implement MonitorFragmentListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public void setInside(String i ){
+        insidepeople.setText(i);
     }
 }

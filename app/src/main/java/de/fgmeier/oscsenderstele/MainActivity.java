@@ -15,7 +15,7 @@ import java.util.Objects;
 import static java.lang.Math.abs;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MonitorFragment.MonitorFragmentListener {
     int t = 0;
     /* These two variables hold the IP address and port number.
      * You should change them to the appropriate address and port.
@@ -96,20 +96,8 @@ public class MainActivity extends Activity {
 
 
         ip_Button = findViewById(R.id.button_ip);
-        ip_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlerThreat.getHandler().sendEmptyMessage(4);
 
-            }
-        });
-        im_Button = findViewById(R.id.button_im);
-        im_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlerThreat.getHandler().sendEmptyMessage(5);
-            }
-        });
+
         /*
         rm_Button = findViewById(R.id.button_rm);
         rm_Button.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +169,7 @@ public class MainActivity extends Activity {
 
     void setUisTextViews(){
         if(isconnected) {
+            fragment.setInside(insidePeople);
             int m = Integer.parseInt(maximumPeople);
             int i = Integer.parseInt(insidePeople);
             if (i >= m) {
@@ -197,6 +186,7 @@ public class MainActivity extends Activity {
 //        maxText.setText(maximumPeople);
 //        insideText.setText(insidePeople);
 
+
         if (isconnected) {
             connectionStatus.setText("CONNECTED");
         } else {
@@ -210,8 +200,15 @@ public class MainActivity extends Activity {
         insidePeople = inside;
         tEnd = System.currentTimeMillis();
         setUisTextViews();
-
-
     }
 
+    @Override
+    public void sendPlusOne() {
+        handlerThreat.getHandler().sendEmptyMessage(4);
+    }
+
+    @Override
+    public void sendMinusOne() {
+        handlerThreat.getHandler().sendEmptyMessage(5);
+    }
 }
