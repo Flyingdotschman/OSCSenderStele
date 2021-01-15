@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import static java.lang.Math.abs;
 
 
@@ -40,9 +42,11 @@ public class MainActivity extends Activity {
     private long tEnd;
     private long tDelta;
 
-    private String maximumPeople;
-    private String insidePeople;
+    private String maximumPeople = "XXX";
+    private String insidePeople = "XXX";
 
+
+    private MonitorFragment fragment;
 
 
     @Override
@@ -50,6 +54,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
+
+        fragment = MonitorFragment.newInstance(insidePeople,maximumPeople);
+        Bundle args = new Bundle();
+
+
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 
         connectionStatus = findViewById(R.id.ConnectedStatus);
 
@@ -67,15 +77,15 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(1);
             }
         });
-        /*
-        mp_Button = findViewById(R.id.button_mp);
+/*
+        mp_Button = findViewById(R.id.buttonX);
         mp_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handlerThreat.getHandler().sendEmptyMessage(2);
+               //handlerThreat.getHandler().sendEmptyMessage(2);
             }
         });
-
+/*
         mm_Button = findViewById(R.id.button_mm);
         mm_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +93,8 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(3);
             }
         });
-*/
+
+
         ip_Button = findViewById(R.id.button_ip);
         ip_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,9 +126,11 @@ public class MainActivity extends Activity {
                 handlerThreat.getHandler().sendEmptyMessage(7);
             }
         });
-*/
+
         maxText = findViewById(R.id.textView_max);
         insideText = findViewById(R.id.textView_inside);
+        */
+
         stopngo = findViewById(R.id.stopngo);
         setUisTextViews();
 
@@ -181,8 +194,8 @@ public class MainActivity extends Activity {
             insidePeople = "?";
         }
 
-        maxText.setText(maximumPeople);
-        insideText.setText(insidePeople);
+//        maxText.setText(maximumPeople);
+//        insideText.setText(insidePeople);
 
         if (isconnected) {
             connectionStatus.setText("CONNECTED");
