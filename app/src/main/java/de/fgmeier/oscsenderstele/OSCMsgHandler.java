@@ -354,7 +354,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_max", Collections.singletonList(70));
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_max", Collections.singletonList(msg.arg1));
                         Log.d(TAG, "handleMessage: reset_max");
 
                         try {
@@ -376,7 +376,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_inside", Collections.singletonList(25));
+                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_inside", Collections.singletonList(msg.arg1));
                         Log.d(TAG, "handleMessage: reset_inside");
 
                         try {

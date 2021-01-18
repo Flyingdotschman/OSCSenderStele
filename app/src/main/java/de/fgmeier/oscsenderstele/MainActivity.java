@@ -4,31 +4,28 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import java.nio.channels.SeekableByteChannel;
 import java.util.Objects;
 
 import static java.lang.Math.abs;
 
 
-public class MainActivity extends Activity implements MonitorFragment.MonitorFragmentListener {
+public class MainActivity extends Activity implements MonitorFragment.MonitorFragmentListener, SettingsFragment.SettingsFragmentListener {
     int t = 0;
     /* These two variables hold the IP address and port number.
      * You should change them to the appropriate address and port.
      */
     private Button firstButton;
-    private Button mp_Button;
-    private Button mm_Button;
-    private Button rm_Button;
-    private Button ip_Button;
-    private Button im_Button;
-    private Button ri_Button;
-    private TextView maxText;
-    private TextView insideText;
+    private ToggleButton switchFragmentButton;
     private TextView connectionStatus;
     private ImageView stopngo;
 
@@ -38,15 +35,18 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
     private Handler mHandler;
     private int checkNumbers = 1000;
     boolean isconnected = false;
+    boolean tryingtoconnect = true;
     private long tStart;
     private long tEnd;
     private long tDelta;
+    int x;
 
-    private String maximumPeople = "XXX";
-    private String insidePeople = "XXX";
+    private String maximumPeople = "?";
+    private String insidePeople = "?";
 
 
-    private MonitorFragment fragment;
+    private MonitorFragment monitorFragment;
+    private SettingsFragment settingsFragment;
 
 
     @Override
@@ -55,13 +55,15 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
 
-        fragment = MonitorFragment.newInstance(insidePeople,maximumPeople);
+        monitorFragment = MonitorFragment.newInstance(insidePeople,maximumPeople);
+        settingsFragment = SettingsFragment.newInstance(insidePeople,maximumPeople);
+
         Bundle args = new Bundle();
 
+        getFragmentManager().beginTransaction().add(R.id.container, monitorFragment).add(R.id.container, settingsFragment).hide(settingsFragment).commit();
+     //   getFragmentManager().beginTransaction().add(R.id.container, monitorFragment).commit();
 
-        getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
-
-        connectionStatus = findViewById(R.id.ConnectedStatus);
+       // connectionStatus = findViewById(R.id.ConnectedStatus);
 
         tEnd = System.currentTimeMillis();
         handlerThreat.start();
@@ -69,58 +71,38 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         startCheckNumber();
 
         firstButton = findViewById(R.id.button_connect);
+        startConnectingButtonAnimation();
         firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // msg = Message.obtain();
-
+                tryingtoconnect = true;
                 handlerThreat.getHandler().sendEmptyMessage(1);
-            }
-        });
-/*
-        mp_Button = findViewById(R.id.buttonX);
-        mp_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               //handlerThreat.getHandler().sendEmptyMessage(2);
-            }
-        });
-/*
-        mm_Button = findViewById(R.id.button_mm);
-        mm_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlerThreat.getHandler().sendEmptyMessage(3);
+                startConnectingButtonAnimation();
+
             }
         });
 
-
-        ip_Button = findViewById(R.id.button_ip);
-
-
-        /*
-        rm_Button = findViewById(R.id.button_rm);
-        rm_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlerThreat.getHandler().sendEmptyMessage(6);
-            }
-        });
-
-        ri_Button = findViewById(R.id.button_ri);
-        ri_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlerThreat.getHandler().sendEmptyMessage(7);
-            }
-        });
-
-        maxText = findViewById(R.id.textView_max);
-        insideText = findViewById(R.id.textView_inside);
-        */
 
         stopngo = findViewById(R.id.stopngo);
         setUisTextViews();
+
+        switchFragmentButton = findViewById(R.id.buttonX);
+        switchFragmentButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    //getFragmentManager().beginTransaction().replace(R.id.container, settingsFragment).commit();
+
+                    getFragmentManager().beginTransaction().hide(monitorFragment).commit();
+                    getFragmentManager().beginTransaction().show(settingsFragment).commit();
+                }else{
+
+                    getFragmentManager().beginTransaction().hide(settingsFragment).commit();
+                    getFragmentManager().beginTransaction().show(monitorFragment).commit();
+                }
+            }
+        });
 
 
     }
@@ -159,6 +141,39 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         }
     };
 
+    Runnable mConnectingButtonUI = new Runnable() {
+        @Override
+        public void run() {
+            switch (x){
+
+                case 1:
+                    firstButton.setText("(- CONNECTING -)");
+                    break;
+                case 2:
+                    firstButton.setText("(- (- CONNECTING -) -)");
+                    break;
+                case 3:
+                    firstButton.setText("(- (- (- CONNECTING -) -) -)");
+                    break;
+                default:
+                    firstButton.setText("CONNECTING");
+                    x = 0;
+
+            }
+            x++;
+            Log.d("X", "X : " + Integer.toString(x));
+            mHandler.postDelayed(mConnectingButtonUI,500);
+        }
+    };
+
+    void startConnectingButtonAnimation(){
+        mConnectingButtonUI.run();
+    }
+    void  stopConnectingButtonAnimation(){
+        mHandler.removeCallbacks(mConnectingButtonUI);
+    }
+
+
     void startCheckNumber() {
         mCheckNumbers.run();
     }
@@ -169,7 +184,13 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
     void setUisTextViews(){
         if(isconnected) {
-            fragment.setInside(insidePeople);
+            stopConnectingButtonAnimation();
+            monitorFragment.setInside(insidePeople);
+
+                Log.d("UI", "setUisTextViews: ");
+                settingsFragment.setNumbersSettingScreen(insidePeople,maximumPeople);
+
+
             int m = Integer.parseInt(maximumPeople);
             int i = Integer.parseInt(insidePeople);
             if (i >= m) {
@@ -177,6 +198,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
             } else {
                 stopngo.setImageResource(R.drawable.green_c);
             }
+
         }else{
             stopngo.setImageResource(R.drawable.grey_c);
             maximumPeople = "?";
@@ -188,9 +210,17 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
 
         if (isconnected) {
-            connectionStatus.setText("CONNECTED");
+            tryingtoconnect = false;
+         //   connectionStatus.setText("CONNECTED");
+            firstButton.setText("CONNECTED");
         } else {
-            connectionStatus.setText("DISCONNECTED");
+        //    connectionStatus.setText("DISCONNECTED");
+            if (tryingtoconnect){
+               // firstButton.setText("CONNECTING ...");
+            }else{
+                firstButton.setText("DISCONNECTED");
+            }
+
         }
     }
 
@@ -198,7 +228,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         tEnd = System.currentTimeMillis();
         maximumPeople = max;
         insidePeople = inside;
-        tEnd = System.currentTimeMillis();
+
         setUisTextViews();
     }
 
@@ -210,5 +240,31 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
     @Override
     public void sendMinusOne() {
         handlerThreat.getHandler().sendEmptyMessage(5);
+    }
+
+    @Override
+    public void sendMaxPlusOne() {
+        handlerThreat.getHandler().sendEmptyMessage(2);
+    }
+
+    @Override
+    public void sendMaxMinusOne() {
+        handlerThreat.getHandler().sendEmptyMessage(3);
+    }
+
+    @Override
+    public void sendSetInside(int i) {
+        Message msg = Message.obtain();
+        msg.what = 7;
+        msg.arg1 = i;
+        handlerThreat.getHandler().sendMessage(msg);
+    }
+
+    @Override
+    public void sendSetMaximum(int i) {
+        Message msg = Message.obtain();
+        msg.what = 6;
+        msg.arg1 = i;
+        handlerThreat.getHandler().sendMessage(msg);
     }
 }
