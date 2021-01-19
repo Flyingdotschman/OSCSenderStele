@@ -197,9 +197,10 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
     void setUisTextViews(){
         switchFragmentButton.setEnabled(isconnected);
+
         if(isconnected) {
             stopConnectingButtonAnimation();
-            monitorFragment.setInside(insidePeople);
+
 
                 Log.d("UI", "setUisTextViews: ");
                 settingsFragment.setNumbersSettingScreen(insidePeople,maximumPeople);
@@ -232,16 +233,18 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
             tryingtoconnect = false;
          //   connectionStatus.setText("CONNECTED");
             firstButton.setText("CONNECTED    \u2713");
+            monitorFragment.setInside(insidePeople);
         } else {
+
             Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.grey_c, null);
             stopngo.setBackground(drawable);
 
             if (tryingtoconnect){
 
             }else{
-
-                stopngo.setImageResource(0);
-                firstButton.setText("DISCONNECTED");
+                monitorFragment.setInside(insidePeople);
+                stopngo.setImageResource(R.drawable.nothing);
+                firstButton.setText("RECONNECT");
                 getFragmentManager().beginTransaction().hide(settingsFragment).commit();
                 getFragmentManager().beginTransaction().show(monitorFragment).commit();
                 switchFragmentButton.setChecked(isconnected);

@@ -139,7 +139,9 @@ public class SettingsFragment extends Fragment {
                 String p =insideSettingTextField.getText().toString();
                 Log.d("READ INSIDE", "onClick: " + p);
                 if(p.length()>0){
-                    listener.sendSetInside(Integer.parseInt(p));
+
+                            listener.sendSetInside(Integer.parseInt(p));
+
                 }else{
                     listener.sendSetInside(0);
 

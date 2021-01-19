@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_pressed="true"
-        android:drawable="@drawable/plus_pressed"/>
+        android:drawable="@drawable/person_plus_w"/>
     <item
-        android:drawable="@drawable/plus"/>
+        android:drawable="@drawable/person_plus"/>
 </selector>

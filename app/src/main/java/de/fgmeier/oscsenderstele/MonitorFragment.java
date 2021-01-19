@@ -24,8 +24,8 @@ public class MonitorFragment extends Fragment {
     private String maxpeople;
 
     private TextView insidepeople;
-    private Button ip_Button;
-    private Button im_Button;
+    private ImageButton ip_Button;
+    private ImageButton im_Button;
 
     private boolean isconnected;
 

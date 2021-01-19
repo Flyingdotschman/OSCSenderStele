@@ -44,7 +44,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/number_inside">
 
-            <Button
+
+            <ImageButton
                 android:id="@+id/button_plus"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -55,18 +56,16 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/custom_button_v2"
-                android:gravity="center"
-                android:text="+"
-                android:textColor="@color/text_button"
-                android:textSize="30sp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/plus_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/button_minus"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-
-            <Button
+            <ImageButton
                 android:id="@+id/button_minus"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -77,10 +76,8 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/custom_button_v2"
-                android:gravity="center"
-                android:text="-"
-                android:textColor="@color/text_button"
-                android:textSize="30sp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/minus_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
