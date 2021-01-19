@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         handlerThreat.start();
         mHandler = new Handler();
         startCheckNumber();
-
+        stopngo = findViewById(R.id.stopngo);
         firstButton = findViewById(R.id.button_connect);
 
         startConnectingButtonAnimation();
@@ -88,7 +88,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         });
 
 
-        stopngo = findViewById(R.id.stopngo);
+
 
 
         switchFragmentButton = findViewById(R.id.buttonX);
@@ -157,15 +157,19 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
                 case 1:
                     firstButton.setText("(- CONNECTING -)");
+                    stopngo.setImageResource(R.drawable.bar1);
                     break;
                 case 2:
                     firstButton.setText("(- (- CONNECTING -) -)");
+                    stopngo.setImageResource(R.drawable.bar2);
                     break;
                 case 3:
                     firstButton.setText("(- (- (- CONNECTING -) -) -)");
+                    stopngo.setImageResource(R.drawable.bar3);
                     break;
                 default:
                     firstButton.setText("CONNECTING");
+                    stopngo.setImageResource(R.drawable.bar0);
                     x = 0;
 
             }
@@ -215,7 +219,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
             }
 
         }else{
-            stopngo.setImageResource(R.drawable.grey_c);
+
             maximumPeople = "?";
             insidePeople = "?";
         }
@@ -229,10 +233,14 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
          //   connectionStatus.setText("CONNECTED");
             firstButton.setText("CONNECTED    \u2713");
         } else {
-        //    connectionStatus.setText("DISCONNECTED");
+            Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.grey_c, null);
+            stopngo.setBackground(drawable);
+
             if (tryingtoconnect){
-               // firstButton.setText("CONNECTING ...");
+
             }else{
+
+                stopngo.setImageResource(0);
                 firstButton.setText("DISCONNECTED");
                 getFragmentManager().beginTransaction().hide(settingsFragment).commit();
                 getFragmentManager().beginTransaction().show(monitorFragment).commit();

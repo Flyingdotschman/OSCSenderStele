@@ -25,6 +25,7 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="?"
             android:textSize="175sp"
+            android:textStyle="bold"
             app:autoSizeMaxTextSize="400sp"
             app:autoSizeMinTextSize="50sp"
             app:autoSizeTextType="uniform"
@@ -43,9 +44,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/number_inside">
 
-            <ImageButton
+            <Button
                 android:id="@+id/button_plus"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
@@ -53,8 +54,10 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/custom_button_v3"
-                android:scaleType="centerCrop"
+                android:background="@drawable/custom_button_v2"
+                android:gravity="center"
+                android:text="+"
+                android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/button_minus"
                 app:layout_constraintHorizontal_bias="0.5"
