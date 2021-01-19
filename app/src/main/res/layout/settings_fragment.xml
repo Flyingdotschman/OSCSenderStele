@@ -39,7 +39,8 @@
                 android:id="@+id/buttons_inside"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/insideTextField"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/sendSetInside"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -78,13 +79,13 @@
                 android:layout_height="0dp"
                 android:ems="10"
                 android:gravity="center"
-                android:hint="0"
+                android:hint="Bitte hier Zahl eingeben"
                 android:inputType="number"
                 android:maxLength="3"
-                app:layout_constraintBottom_toTopOf="@+id/sendSetInside"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttons_inside" />
+                app:layout_constraintTop_toBottomOf="@+id/sendSetInside" />
 
             <Button
                 android:id="@+id/sendSetInside"
@@ -92,10 +93,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/custom_button_v2"
                 android:text="Button"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/insideTextField"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/insideTextField" />
+                app:layout_constraintTop_toBottomOf="@+id/buttons_inside" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -126,7 +127,8 @@
                 android:id="@+id/buttons_max"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/maxTextField"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/sendMaxButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -165,13 +167,14 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:ems="10"
-                android:gravity="right|center_vertical"
+                android:gravity="center"
+                android:hint="Bitte hier Zahl eingeben"
                 android:inputType="numberSigned"
                 android:maxLength="3"
-                app:layout_constraintBottom_toTopOf="@+id/sendMaxButton"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttons_max" />
+                app:layout_constraintTop_toBottomOf="@+id/sendMaxButton" />
 
             <Button
                 android:id="@+id/sendMaxButton"
@@ -179,10 +182,10 @@
                 android:layout_height="0dp"
                 android:background="@drawable/custom_button_v2"
                 android:text="Button"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/maxTextField"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/maxTextField" />
+                app:layout_constraintTop_toBottomOf="@+id/buttons_max" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

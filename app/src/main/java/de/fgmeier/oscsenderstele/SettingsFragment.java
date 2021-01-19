@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,8 +67,8 @@ public class SettingsFragment extends Fragment {
         maxView = v.findViewById(R.id.maxpoepleTextView);
 
         if(getArguments() != null){
-            inside = getArguments().getString(ARG_INSIDE);
-            maxpeople = getArguments().getString(ARG_MAXIMUS);
+            inside = "Aktuelle Besucher: " + getArguments().getString(ARG_INSIDE);
+            maxpeople = "Maximale Besucher: " + getArguments().getString(ARG_MAXIMUS);
             insideView.setText(inside);
             maxView.setText(maxpeople);
         }
@@ -107,8 +108,9 @@ public class SettingsFragment extends Fragment {
         insideSettingTextField = v.findViewById(R.id.insideTextField);
         insideSendButton = v.findViewById(R.id.sendSetInside);
 
-        String visitors = "Setze Besucher auf: ";
-        insideSendButton.setText(visitors + insideSettingTextField.getHint().toString());
+        String visitors = "Setze Besucher auf:\n";
+        String insidehint= "Zahl eingeben oder\nauf 0 setzen";
+        insideSendButton.setText(visitors + insidehint);
         insideSettingTextField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -125,7 +127,7 @@ public class SettingsFragment extends Fragment {
                 if (s.toString().length()>0){
                     insideSendButton.setText(visitors + s.toString());
                 }else{
-                    insideSendButton.setText(visitors + insideSettingTextField.getHint().toString());
+                    insideSendButton.setText(visitors + insidehint);
                 }
 
             }
@@ -139,20 +141,21 @@ public class SettingsFragment extends Fragment {
                 if(p.length()>0){
                     listener.sendSetInside(Integer.parseInt(p));
                 }else{
-                    listener.sendSetInside(Integer.parseInt(insideSettingTextField.getHint().toString()));
+                    listener.sendSetInside(0);
 
                 }
 
             }
         });
 
-        String maxvisotors = "Setze maximale Besucher auf:";
+        String maxvisotors = "Setze\n maximale Besucher auf:\n";
+        String maxhint = "Zahl eingben";
         maxSettingTextField = v.findViewById(R.id.maxTextField);
 
         maxSendButton = v.findViewById(R.id.sendMaxButton);
-        maxSendButton.setText(maxvisotors);
+        maxSendButton.setText(maxvisotors + maxhint);
 
-        maxSettingTextField.setHint("Bitte Zahl eingeben");
+        //maxSettingTextField.setHint(maxhint);
         maxSettingTextField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -166,7 +169,12 @@ public class SettingsFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if(s.toString().length()>0){
                     maxSendButton.setText(maxvisotors + s.toString());
+                }else{
+                    maxSendButton.setText(maxvisotors+maxhint);
+                }
+
             }
         });
         maxSendButton.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +211,9 @@ public class SettingsFragment extends Fragment {
         listener = null;
     }
     public void setNumbersSettingScreen(String inside, String maxpeople){
-        insideView.setText(inside);
-        maxView.setText(maxpeople);
+        inside = "Aktuelle Besucher: <b>" + inside + "</b>";
+        maxpeople = "Maximale Besucher: <b>" + maxpeople + "</b>";
+        insideView.setText(Html.fromHtml(inside));
+        maxView.setText(Html.fromHtml(maxpeople));
     }
 }
