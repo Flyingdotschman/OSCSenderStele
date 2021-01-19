@@ -2,6 +2,8 @@ package de.fgmeier.oscsenderstele;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +14,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import java.nio.channels.SeekableByteChannel;
 import java.util.Objects;
@@ -40,7 +44,6 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
     private long tEnd;
     private long tDelta;
     int x;
-
     private String maximumPeople = "?";
     private String insidePeople = "?";
 
@@ -55,7 +58,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
 
-        monitorFragment = MonitorFragment.newInstance(insidePeople,maximumPeople);
+        monitorFragment = MonitorFragment.newInstance(insidePeople,maximumPeople,isconnected);
         settingsFragment = SettingsFragment.newInstance(insidePeople,maximumPeople);
 
         Bundle args = new Bundle();
@@ -71,6 +74,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         startCheckNumber();
 
         firstButton = findViewById(R.id.button_connect);
+
         startConnectingButtonAnimation();
         firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,9 +89,12 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
 
         stopngo = findViewById(R.id.stopngo);
-        setUisTextViews();
+
 
         switchFragmentButton = findViewById(R.id.buttonX);
+        switchFragmentButton.setEnabled(isconnected);
+        switchFragmentButton.setTextOff("");
+        switchFragmentButton.setTextOn("");
         switchFragmentButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -103,6 +110,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
                 }
             }
         });
+        setUisTextViews();
 
 
     }
@@ -133,6 +141,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
                    setUisTextViews();
 
                 }
+                monitorFragment.setArgConnected(isconnected);
                 tStart = System.currentTimeMillis();
             } catch (Exception e) {
                 Log.d("CheckNumbers", "run: No Connection ");
@@ -162,7 +171,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
             }
             x++;
             Log.d("X", "X : " + Integer.toString(x));
-            mHandler.postDelayed(mConnectingButtonUI,500);
+            mHandler.postDelayed(mConnectingButtonUI,750);
         }
     };
 
@@ -183,6 +192,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
     }
 
     void setUisTextViews(){
+        switchFragmentButton.setEnabled(isconnected);
         if(isconnected) {
             stopConnectingButtonAnimation();
             monitorFragment.setInside(insidePeople);
@@ -194,9 +204,14 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
             int m = Integer.parseInt(maximumPeople);
             int i = Integer.parseInt(insidePeople);
             if (i >= m) {
-                stopngo.setImageResource(R.drawable.red_c);
+                stopngo.setImageResource(R.drawable.stop);
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.red_c, null);
+                stopngo.setBackground(drawable);
+
             } else {
-                stopngo.setImageResource(R.drawable.green_c);
+                stopngo.setImageResource(R.drawable.go);
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.green_c, null);
+                stopngo.setBackground(drawable);
             }
 
         }else{
@@ -212,13 +227,16 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         if (isconnected) {
             tryingtoconnect = false;
          //   connectionStatus.setText("CONNECTED");
-            firstButton.setText("CONNECTED");
+            firstButton.setText("CONNECTED    \u2713");
         } else {
         //    connectionStatus.setText("DISCONNECTED");
             if (tryingtoconnect){
                // firstButton.setText("CONNECTING ...");
             }else{
                 firstButton.setText("DISCONNECTED");
+                getFragmentManager().beginTransaction().hide(settingsFragment).commit();
+                getFragmentManager().beginTransaction().show(monitorFragment).commit();
+                switchFragmentButton.setChecked(isconnected);
             }
 
         }

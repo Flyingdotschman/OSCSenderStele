@@ -10,10 +10,12 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout3"
+            android:id="@+id/insidesettings"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/maximumsettings"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -70,6 +72,7 @@
                 android:gravity="right|center_vertical"
                 android:hint="0"
                 android:inputType="number"
+                android:maxLength="3"
                 app:layout_constraintBottom_toTopOf="@+id/sendSetInside"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -88,12 +91,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout2"
+            android:id="@+id/maximumsettings"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/constraintLayout3">
+            app:layout_constraintStart_toEndOf="@+id/insidesettings">
 
             <TextView
                 android:id="@+id/maxpoepleTextView"
@@ -140,7 +145,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
             <EditText
                 android:id="@+id/maxTextField"
                 android:layout_width="0dp"
@@ -148,6 +152,7 @@
                 android:ems="10"
                 android:gravity="right|center_vertical"
                 android:inputType="numberSigned"
+                android:maxLength="3"
                 app:layout_constraintBottom_toTopOf="@+id/sendMaxButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -45,6 +45,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline12"
             android:layout_width="wrap_content"
             android:layout_height="100sp"
@@ -63,7 +70,7 @@
 
         <Button
             android:id="@+id/button_connect"
-            android:layout_width="0dp"
+            android:layout_width="200sp"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_button"
             android:text="Connect"
@@ -73,18 +80,31 @@
             app:layout_constraintTop_toTopOf="@+id/guideline12" />
 
 
-
         <ToggleButton
             android:id="@+id/buttonX"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/toggle_boggle"
+            android:text="Einstellungen"
+            android:textAllCaps="false"
+            android:textIsSelectable="true"
+            android:textOff=" "
+            android:textOn=" "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+        <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/fragmentswitchbtn"
-            android:text="Button"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Einstellungen"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_connect"
-            app:layout_constraintStart_toStartOf="@+id/imageView2"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            app:layout_constraintStart_toEndOf="@+id/buttonX"
+            app:layout_constraintTop_toTopOf="@+id/guideline12" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -124,6 +144,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline"></FrameLayout>
+        app:layout_constraintTop_toTopOf="@+id/guideline"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
