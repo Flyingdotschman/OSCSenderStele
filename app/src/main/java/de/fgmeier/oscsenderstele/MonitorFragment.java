@@ -102,7 +102,8 @@ public class MonitorFragment extends Fragment {
         insidepeople.setText(i);
     }
 
-    public void setArgConnected(boolean b){isconnected = b;
+    public void setArgConnected(boolean b){
+        isconnected = b;
         im_Button.setEnabled(isconnected);
         ip_Button.setEnabled(isconnected);
 

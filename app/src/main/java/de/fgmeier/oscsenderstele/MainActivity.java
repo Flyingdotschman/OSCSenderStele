@@ -21,6 +21,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.util.Objects;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.getExponent;
 
 
 public class MainActivity extends Activity implements MonitorFragment.MonitorFragmentListener, SettingsFragment.SettingsFragmentListener {
@@ -63,11 +64,12 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
         Bundle args = new Bundle();
 
-        getFragmentManager().beginTransaction().add(R.id.container, monitorFragment).add(R.id.container, settingsFragment).hide(settingsFragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.container, monitorFragment).hide(monitorFragment).add(R.id.container, settingsFragment).hide(settingsFragment).commit();
+       // getFragmentManager().beginTransaction().show(monitorFragment).commit();
      //   getFragmentManager().beginTransaction().add(R.id.container, monitorFragment).commit();
 
        // connectionStatus = findViewById(R.id.ConnectedStatus);
-
+        tStart =  System.currentTimeMillis();
         tEnd = System.currentTimeMillis();
         handlerThreat.start();
         mHandler = new Handler();
@@ -93,21 +95,13 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
         switchFragmentButton = findViewById(R.id.buttonX);
         switchFragmentButton.setEnabled(isconnected);
+        showMyFragment();
         switchFragmentButton.setTextOff("");
         switchFragmentButton.setTextOn("");
         switchFragmentButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    //getFragmentManager().beginTransaction().replace(R.id.container, settingsFragment).commit();
-
-                    getFragmentManager().beginTransaction().hide(monitorFragment).commit();
-                    getFragmentManager().beginTransaction().show(settingsFragment).commit();
-                }else{
-
-                    getFragmentManager().beginTransaction().hide(settingsFragment).commit();
-                    getFragmentManager().beginTransaction().show(monitorFragment).commit();
-                }
+                showMyFragment();
             }
         });
         setUisTextViews();
@@ -129,9 +123,11 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
         @Override
         public void run() {
             try {
-                handlerThreat.getHandler().sendEmptyMessage(8); 
-                tDelta = abs(tEnd - tStart);
+                handlerThreat.getHandler().sendEmptyMessage(8);
+                long mytEnd = tEndtoRunnable();
+                tDelta = abs(mytEnd - tStart);
                 String tDeltaString = Long.toString(tDelta);
+                Log.d("tEnd", "mCheckNumbers: mytEnd  " + Long.toString(mytEnd % 100000));
                 Log.d("TIME: ", "DeltaTime: " + tDeltaString);
                 if (tDelta < 3 * checkNumbers) {
                     isconnected = true;
@@ -143,6 +139,7 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
                 }
                 monitorFragment.setArgConnected(isconnected);
                 tStart = System.currentTimeMillis();
+                Log.d("tStart", "mCheckNumbers: tStart " + Long.toString(tStart % 100000) );
             } catch (Exception e) {
                 Log.d("CheckNumbers", "run: No Connection ");
             }
@@ -168,6 +165,8 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
                     stopngo.setImageResource(R.drawable.bar3);
                     break;
                 default:
+                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.grey_c, null);
+                    stopngo.setBackground(drawable);
                     firstButton.setText("CONNECTING");
                     stopngo.setImageResource(R.drawable.bar0);
                     x = 0;
@@ -193,6 +192,20 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
     void stopCheckNumbers() {
         mHandler.removeCallbacks(mCheckNumbers);
+    }
+
+    void showMyFragment(){
+
+        if(switchFragmentButton.isChecked()){
+            //getFragmentManager().beginTransaction().replace(R.id.container, settingsFragment).commit();
+
+            getFragmentManager().beginTransaction().hide(monitorFragment).commit();
+            getFragmentManager().beginTransaction().show(settingsFragment).commit();
+        }else{
+
+            getFragmentManager().beginTransaction().hide(settingsFragment).commit();
+            getFragmentManager().beginTransaction().show(monitorFragment).commit();
+        }
     }
 
     void setUisTextViews(){
@@ -255,10 +268,19 @@ public class MainActivity extends Activity implements MonitorFragment.MonitorFra
 
     public void receivedMsg(String max, String inside) {
         tEnd = System.currentTimeMillis();
+        Log.d("tEnd", "receivedMsg: tEnd  " + Long.toString(tEnd % 100000));
         maximumPeople = max;
         insidePeople = inside;
-
+        if(!isconnected){
+            mHandler.removeCallbacks(mCheckNumbers);
+            mCheckNumbers.run();
+        }
         setUisTextViews();
+    }
+
+    public long tEndtoRunnable(){
+        long tmp = tEnd;
+        return tmp;
     }
 
     @Override

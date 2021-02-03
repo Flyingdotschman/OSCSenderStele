@@ -118,7 +118,7 @@ public class OSCMsgHandler extends Handler {
         }
         if (oscPortOut != null) {
 
-            OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter_info", Collections.singletonList(0));
+            OSCMessage message = new OSCMessage("/counter/counter_info", Collections.singletonList(0));
             Log.d(TAG, "OSCMsgHandler: Send Counter_info");
 
             try {
@@ -243,7 +243,7 @@ public class OSCMsgHandler extends Handler {
                         if (oscPortIn.isListening()) {
                             Log.d("Listener", "is listening");
                         }
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter_info", Collections.singletonList(0));
+                        OSCMessage message = new OSCMessage("/counter/counter_info", Collections.singletonList(0));
 
 
                         try {
@@ -265,7 +265,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/max_plus", Collections.singletonList(0));
+                        OSCMessage message = new OSCMessage("/counter/max_plus", Collections.singletonList(0));
                         Log.d(TAG, "handleMessage: max_plus");
 
                         try {
@@ -288,7 +288,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/max_minus", Collections.singletonList(1));
+                        OSCMessage message = new OSCMessage("/counter/max_minus", Collections.singletonList(1));
                         Log.d(TAG, "handleMessage: max_minus");
 
                         try {
@@ -310,7 +310,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/inside_plus", Collections.singletonList(2));
+                        OSCMessage message = new OSCMessage("/counter/inside_plus", Collections.singletonList(2));
                         Log.d(TAG, "handleMessage: inside_plus");
 
                         try {
@@ -332,7 +332,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/inside_minus", Collections.singletonList(6));
+                        OSCMessage message = new OSCMessage("/counter/inside_minus", Collections.singletonList(6));
                         Log.d(TAG, "handleMessage: inside_minus");
 
                         try {
@@ -354,7 +354,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_max", Collections.singletonList(msg.arg1));
+                        OSCMessage message = new OSCMessage("/counter/reset_max", Collections.singletonList(msg.arg1));
                         Log.d(TAG, "handleMessage: reset_max");
 
                         try {
@@ -376,7 +376,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/reset_inside", Collections.singletonList(msg.arg1));
+                        OSCMessage message = new OSCMessage("/counter/reset_inside", Collections.singletonList(msg.arg1));
                         Log.d(TAG, "handleMessage: reset_inside");
 
                         try {
@@ -398,7 +398,7 @@ public class OSCMsgHandler extends Handler {
                 if (success) {
                     if (oscPortOut != null) {
 
-                        OSCMessage message = new OSCMessage("/pipresents/pipresents/counter/counter_info", Collections.singletonList(0));
+                        OSCMessage message = new OSCMessage("/counter/counter_info", Collections.singletonList(0));
                         Log.d(TAG, "handleMessage: get_counters");
 
                         try {
