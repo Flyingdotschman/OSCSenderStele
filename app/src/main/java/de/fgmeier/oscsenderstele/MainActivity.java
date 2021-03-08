@@ -23,7 +23,7 @@ import java.util.Objects;
 import static java.lang.Math.abs;
 import static java.lang.Math.getExponent;
 
-
+#Techniker Branch
 public class MainActivity extends Activity implements MonitorFragment.MonitorFragmentListener, SettingsFragment.SettingsFragmentListener {
     int t = 0;
     /* These two variables hold the IP address and port number.
